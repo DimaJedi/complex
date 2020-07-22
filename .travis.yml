@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t dimajedi/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run dimajedi/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t dimajedi/complex-client ./client
+  - docker build -t dimajedi/complex-nginx ./nginx
+  - docker build -t dimajedi/complex-server ./server
+  - docker build -t dimajedi/complex-worker ./worker
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  - docker push dimajedi/complex-client
+  - docker push dimajedi/complex-nginx
+  - docker push dimajedi/complex-server
+  - docker push dimajedi/complex-worker
