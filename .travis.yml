@@ -8,7 +8,7 @@ before_install:
   - gcloud components update kubectl
   - gcloud auth activate-service-account --key-file service-account.json
   - gcloud config set project dogwood-abacus-298509
-  - gcould config set compute/zone europe-west3-a
+  - gcloud config set compute/zone europe-west3-a
   - gcloud config get-credentials multi-cluster
   - echo "$DOCKER_PASSWORD" | docker login -u "DOCKER_USERNAME" --password-stdin
   - docker build -t dimajedi/react-test -f ./client/Dockerfile.dev ./client
