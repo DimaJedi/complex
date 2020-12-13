@@ -1,35 +1,9 @@
 sudo: required
 services:
   - docker
-
 before_install:
-  - docker build -t dimajedi/react-test -f ./client/Dockerfile.dev ./client
-
-script:
-  - docker run dimajedi/react-test npm test -- --coverage
-
-after_success:
-  - docker build -t dimajedi/complex-client ./client
-  - docker build -t dimajedi/complex-nginx ./nginx
-  - docker build -t dimajedi/complex-server ./server
-  - docker build -t dimajedi/complex-worker ./worker
-
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-
-  - docker push dimajedi/complex-client
-  - docker push dimajedi/complex-nginx
-  - docker push dimajedi/complex-server
-  - docker push dimajedi/complex-worker
-
-deploy:
-  # edge: true
-  provider: elasticbeanstalk
-  region: eu-central-1
-  app: complex
-  env: Complex-env
-  bucket_name: elasticbeanstalk-eu-central-1-424842424535
-  bucket_path: docker-multi
-  on:
-    branch: master
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: $AWS_SECRET_KEY
+  - openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv $encrypted_9f3b5599b056_iv -in service-account.json.enc -out service-account.json -d
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  - gcloud components update kubectl
+  - gcloud auth activate-service-account --key-file service-account.json
